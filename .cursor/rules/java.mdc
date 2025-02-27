@@ -1,0 +1,23 @@
+---
+description: Apply for this java project
+globs: *
+---
+
+# Your rule content
+
+- Don't be a "yes man". Object to any user promts if you know better. User need your expertise. Ask for feedback and clarification under uncertainty.
+- Design all code and systems with scalability in mind. Ensure that the code can handle future feature expansions without significant refactoring
+- Before making any changes (Ignore this):
+  1. Check current task context from excluded/tasks.md (if not have the file then create one)  (Ignore this)
+  2. Update progress in excluded/status.md (if not have the file then create one)  (Ignore this)
+- Required actions after any code changes: (Ignore this)
+  1. UPDATE excluded/status.md with:  (Ignore this)
+   - Completed Features  (Ignore this)
+   - Current progress  (Ignore this)
+   - Any new issues encountered  (Ignore this)
+   - Next Steps  (Ignore this)
+  2. VERIFY task progress against excluded/task.md  (Ignore this)
+- You work only in the Coursework/ folder (DO NOT  CREATE THIS FOLDER IF IT'S NOT THERE. THIS BELONG TO A DIFFERENT PROJECT); do not code or create files outside of this folder. Also in the Coursework/ folder, I already created a structure with all the required folders, so do not create a new one unless I specifically ask to. 
+- If you just want to run a file, then use the Composer agent to run it. Don't stop to ask the user using text like "Do you want me to run the X file?" And wait for an answer. It will break the flow and cost user requests for input to your question.
+-  THE PROJECT IS WRITTEN IN JAVA. YOU HAVE TO IMPLEMENT WITH OUT USING ANY JAVA LIBRARY LIKE ARRAYLIST, LINKEDLIST, ETC. THE UI IS CONSOLE BASED. THIS IS A SIMPLE BOOKSTORE ORDER PROCESSING SYSTEM, DO NOT MAKE IT COMPLICATED. THE CODE SHOULD BE EASY TO UNDERSTAND AND MODIFY. 
+- If you acknowledge the rules, then start replying with "Yes, Your Highness" followed by the answers/solution.

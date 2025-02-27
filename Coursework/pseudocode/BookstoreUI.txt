@@ -1,0 +1,170 @@
+BOOKSTORE UI EXPLANATION
+=====================
+
+CLASS BookstoreUI:
+    // This is our main class that provides the user interface
+    // It's where customers interact with the system
+
+    // Create a queue to store all orders
+    PRIVATE STATIC orderQueue = NEW Queue<Order>()
+
+    // Main program entry point
+    METHOD main(args: Array of String):
+        scanner = NEW Scanner(System.in)     // Tool to read user input
+        exit = false                         // Flag to control when to quit
+
+        // Keep running until user chooses to exit
+        WHILE NOT exit:
+            showMenu()                       // Display the menu options
+            PRINT "Choose an option: "
+            input = scanner.nextLine()       // Get user's choice
+
+            // Do different things based on user's choice
+            SWITCH input:
+                CASE "1":
+                    placeOrder(scanner)      // Handle new order
+                CASE "2":
+                    viewOrders()            // Show all orders
+                CASE "3":
+                    searchOrder(scanner)     // Find specific order
+                CASE "4":
+                    exit = true             // Time to quit
+                    PRINT "Exiting the system. Goodbye!"
+                DEFAULT:
+                    PRINT "Invalid option. Please try again."
+
+        scanner.close()                      // Clean up
+
+    // Shows the main menu
+    PRIVATE METHOD showMenu():
+        PRINT "========= Bookstore Order Processing System ========="
+        PRINT "1. Place a New Order"
+        PRINT "2. View All Orders"
+        PRINT "3. Search Order by Order ID"
+        PRINT "4. Exit"
+        PRINT "=================================================="
+
+    // Handles the process of placing a new order
+    PRIVATE METHOD placeOrder(scanner: Scanner):
+        TRY:
+            // Get customer details
+            PRINT "Enter customer name: "
+            customerName = scanner.nextLine()
+            IF customerName.trim() IS EMPTY THEN:
+                PRINT "Customer name cannot be empty."
+                RETURN
+
+            PRINT "Enter shipping address: "
+            shippingAddress = scanner.nextLine()
+            IF shippingAddress.trim() IS EMPTY THEN:
+                PRINT "Shipping address cannot be empty."
+                RETURN
+
+            // Get number of books
+            PRINT "Enter number of books in the order: "
+            numBooks = CONVERT scanner.nextLine() TO INTEGER
+            IF numBooks <= 0 THEN:
+                PRINT "Number of books should be at least 1."
+                RETURN
+
+            // Create array to store books
+            books = NEW Array of Book[numBooks]
+
+            // Get details for each book
+            FOR i = 0 TO numBooks - 1:
+                PRINT "Enter title for book " + (i + 1) + ": "
+                title = scanner.nextLine()
+                IF title.trim() IS EMPTY THEN:
+                    PRINT "Book title cannot be empty."
+                    RETURN
+
+                PRINT "Enter quantity for book " + (i + 1) + ": "
+                quantity = CONVERT scanner.nextLine() TO INTEGER
+                IF quantity <= 0 THEN:
+                    PRINT "Book quantity must be a positive integer."
+                    RETURN
+
+                books[i] = NEW Book(title, quantity)
+
+            // Sort the books by title
+            InsertionSorter.sort(books)
+
+            // Create and store the order
+            newOrder = NEW Order(customerName, shippingAddress, books)
+            orderQueue.enqueue(newOrder)
+            PRINT "Order placed successfully! Order ID: " + newOrder.getOrderId()
+
+        CATCH NumberFormatException:
+            PRINT "Input format error: " + error message
+        CATCH ANY Exception:
+            PRINT "Error placing order: " + error message
+
+    // Shows all orders in the system
+    PRIVATE METHOD viewOrders():
+        orders = orderQueue.toArray()
+        IF orders.length EQUALS 0 THEN:
+            PRINT "No orders available."
+            RETURN
+
+        PRINT "----- All Orders -----"
+        FOR EACH obj IN orders:
+            order = (Order) obj
+            PRINT order
+            PRINT "----------------------"
+
+    // Searches for a specific order by ID
+    PRIVATE METHOD searchOrder(scanner: Scanner):
+        TRY:
+            PRINT "Enter Order ID to search: "
+            orderId = CONVERT scanner.nextLine() TO INTEGER
+            
+            // Create dummy order for searching
+            searchDummy = NEW Order(orderId)
+            
+            // Get all orders and search
+            orders = orderQueue.toArray()
+            index = LinearSearcher.search(orders, searchDummy)
+            
+            IF index != -1 THEN:
+                foundOrder = (Order) orders[index]
+                PRINT "Order found:"
+                PRINT foundOrder
+            ELSE:
+                PRINT "Order with ID " + orderId + " not found."
+        CATCH ANY Exception:
+            PRINT "Error searching for order: " + error message
+
+END CLASS
+
+EXPLANATION OF HOW THE UI WORKS:
+-----------------------------
+Think of it like a restaurant ordering system:
+
+1. Main Menu (like a restaurant menu):
+   - Option 1: Place a new order (like a waiter taking your order)
+   - Option 2: View all orders (like checking all active orders)
+   - Option 3: Search for an order (like finding a specific order)
+   - Option 4: Exit (close the restaurant)
+
+2. Placing an Order:
+   - Get customer details (like taking customer's name and table number)
+   - Get book details (like taking food orders)
+   - Sort books by title (like organizing the order slip)
+   - Save the order (like sending the order to the kitchen)
+
+3. Viewing Orders:
+   - Shows all orders in the system (like looking at all active orders)
+   - If no orders, tells you it's empty
+
+4. Searching Orders:
+   - Enter order ID (like looking for a specific order slip)
+   - Shows the order if found
+   - Tells you if not found
+
+ERROR HANDLING:
+-------------
+The system handles various mistakes:
+- Empty names or addresses
+- Invalid numbers (like -1 books)
+- Invalid menu choices
+- Missing orders when searching 
