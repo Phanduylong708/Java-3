@@ -3,6 +3,7 @@ import java.util.Scanner;
 public class BookstoreUI {
 
     private static Queue<Order> orderQueue = new Queue<>();
+    private static Stack<Order> orderStack = new Stack<>();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -22,6 +23,9 @@ public class BookstoreUI {
                     searchOrder(scanner);
                     break;
                 case "4":
+                    undoLastOrder();
+                    break;
+                case "5":
                     exit = true;
                     System.out.println("Exiting the system. Goodbye!");
                     break;
@@ -37,7 +41,8 @@ public class BookstoreUI {
         System.out.println("1. Place a New Order");
         System.out.println("2. View All Orders");
         System.out.println("3. Search Order by Order ID");
-        System.out.println("4. Exit");
+        System.out.println("4. Undo Last Order");
+        System.out.println("5. Exit");
         System.out.println("=======================================================");
     }
 
@@ -87,6 +92,7 @@ public class BookstoreUI {
             
             Order newOrder = new Order(customerName, shippingAddress, books);
             orderQueue.enqueue(newOrder);
+            orderStack.push(newOrder);
             System.out.println("Order placed successfully! Order ID: " + newOrder.getOrderId());
         } catch (NumberFormatException e) {
             System.out.println("Input format error: " + e.getMessage());
@@ -127,5 +133,30 @@ public class BookstoreUI {
         } catch (Exception e) {
             System.out.println("Error searching for order: " + e.getMessage());
         }
+    }
+
+    private static void undoLastOrder() {
+        if (orderStack.isEmpty()) {
+            System.out.println("No orders to undo.");
+            return;
+        }
+        Order undoneOrder = orderStack.pop();
+
+        // Remove the undone order from the queue
+        Object[] ordersArray = orderQueue.toArray();
+        // Create a new queue without the undone order
+        Queue<Order> newQueue = new Queue<>();
+        boolean found = false;
+        for (Object obj : ordersArray) {
+            Order order = (Order) obj;
+            // Remove the first instance that matches the undone order
+            if (!found && order.equals(undoneOrder)) {
+                found = true;
+                continue;
+            }
+            newQueue.enqueue(order);
+        }
+        orderQueue = newQueue;
+        System.out.println("Undid order with ID: " + undoneOrder.getOrderId());
     }
 }
