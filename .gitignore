@@ -3,3 +3,7 @@ EdgeCaseTests.java
 TestFunctions.java
 *.class
 *.txt
+Coursework/excluded/
+.cursor/rules/java.mdc
+.cursor/rules/java.md
+Coursework/docs/
