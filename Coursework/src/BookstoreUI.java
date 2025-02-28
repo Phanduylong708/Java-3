@@ -45,16 +45,20 @@ public class BookstoreUI {
         try {
             System.out.print("Enter customer name: ");
             String customerName = scanner.nextLine();
-            if (customerName.trim().isEmpty()) {
-                System.out.println("Customer name cannot be empty.");
+            // Validate customer name using Validator
+            if (!Validator.isValidCustomerName(customerName)) {
+                System.out.println("Invalid customer name. Please use only letters and spaces.");
                 return;
             }
+            
             System.out.print("Enter shipping address: ");
             String shippingAddress = scanner.nextLine();
-            if (shippingAddress.trim().isEmpty()) {
-                System.out.println("Shipping address cannot be empty.");
+            // Validate shipping address using Validator (allowing letters, digits, and spaces)
+            if (!Validator.isValidShippingAddress(shippingAddress)) {
+                System.out.println("Invalid shipping address. Please use only letters, digits, and spaces.");
                 return;
             }
+            
             System.out.print("Enter number of books in the order: ");
             int numBooks = Integer.parseInt(scanner.nextLine());
             if (numBooks <= 0) {
@@ -65,6 +69,7 @@ public class BookstoreUI {
             for (int i = 0; i < numBooks; i++) {
                 System.out.print("Enter title for book " + (i + 1) + ": ");
                 String title = scanner.nextLine();
+                // We don't validate book title now (only non-empty check is required)
                 if (title.trim().isEmpty()) {
                     System.out.println("Book title cannot be empty.");
                     return;
