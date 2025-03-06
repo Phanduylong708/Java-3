@@ -9,117 +9,155 @@ public class BookstoreUI {
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
         while (!exit) {
-            showMenu();
-            System.out.print("Choose an option: ");
+            ConsoleUI.clearScreen();
+            ConsoleUI.showMainMenu();
+            System.out.print("\nEnter your choice (1-6): ");
             String input = scanner.nextLine();
+            ConsoleUI.clearScreen();
             switch (input) {
                 case "1":
-                    placeOrder(scanner);
+                    showOrderManagementMenu(scanner);
                     break;
                 case "2":
-                    viewOrders();
+                    showViewSearchMenu(scanner);
                     break;
                 case "3":
-                    searchOrder(scanner);
-                    break;
-                case "4":
-                    undoLastOrder();
-                    break;
-                case "5":
                     exit = true;
-                    System.out.println("Exiting the system. Goodbye!");
+                    System.out.println("Thank you for using the Bookstore Order Processing System. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");
+                    ConsoleUI.waitForEnter(scanner);
             }
         }
         scanner.close();
     }
 
-    private static void showMenu() {
-        System.out.println("========= Bookstore Order Processing System =========");
-        System.out.println("1. Place a New Order");
-        System.out.println("2. View All Orders");
-        System.out.println("3. Search Order by Order ID");
-        System.out.println("4. Undo Last Order");
-        System.out.println("5. Exit");
-        System.out.println("=======================================================");
+    private static void showOrderManagementMenu(Scanner scanner) {
+        boolean back = false;
+        while (!back) {
+            ConsoleUI.clearScreen();
+            ConsoleUI.showOrderManagementMenu();
+            System.out.print("\nEnter your choice (1-3): ");
+            String input = scanner.nextLine();
+            ConsoleUI.clearScreen();
+            
+            switch (input) {
+                case "1":
+                    placeOrder(scanner);
+                    break;
+                case "2":
+                    undoLastOrder();
+                    break;
+                case "3":
+                    back = true;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+            if (!back) {
+                ConsoleUI.waitForEnter(scanner);
+            }
+        }
+    }
+
+    private static void showViewSearchMenu(Scanner scanner) {
+        boolean back = false;
+        while (!back) {
+            ConsoleUI.clearScreen();
+            ConsoleUI.showViewSearchMenu();
+            System.out.print("\nEnter your choice (1-3): ");
+            String input = scanner.nextLine();
+            ConsoleUI.clearScreen();
+            
+            switch (input) {
+                case "1":
+                    viewOrders();
+                    break;
+                case "2":
+                    searchOrder(scanner);
+                    break;
+                case "3":
+                    back = true;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+            if (!back) {
+                ConsoleUI.waitForEnter(scanner);
+            }
+        }
     }
 
     private static void placeOrder(Scanner scanner) {
         try {
             System.out.print("Enter customer name: ");
             String customerName = scanner.nextLine();
-            // Validate customer name using Validator
             if (!Validator.isValidCustomerName(customerName)) {
-                System.out.println("Invalid customer name. Please use only letters and spaces.");
+                ConsoleUI.displayError("Invalid customer name. Please use only letters and spaces.");
                 return;
             }
             
             System.out.print("Enter shipping address: ");
             String shippingAddress = scanner.nextLine();
-            // Validate shipping address using Validator (allowing letters, digits, and spaces)
             if (!Validator.isValidShippingAddress(shippingAddress)) {
-                System.out.println("Invalid shipping address. Please use only letters, digits, and spaces.");
+                ConsoleUI.displayError("Invalid shipping address. Please use only letters, digits, and spaces.");
                 return;
             }
             
             System.out.print("Enter number of books in the order: ");
             int numBooks = Integer.parseInt(scanner.nextLine());
             if (numBooks <= 0) {
-                System.out.println("Number of books should be at least 1.");
+                ConsoleUI.displayError("Number of books should be at least 1.");
                 return;
             }
             Book[] books = new Book[numBooks];
             for (int i = 0; i < numBooks; i++) {
                 System.out.print("Enter title for book " + (i + 1) + ": ");
                 String title = scanner.nextLine();
-                // We don't validate book title now (only non-empty check is required)
                 if (title.trim().isEmpty()) {
-                    System.out.println("Book title cannot be empty.");
+                    ConsoleUI.displayError("Book title cannot be empty.");
                     return;
                 }
                 System.out.print("Enter quantity for book " + (i + 1) + ": ");
                 int quantity = Integer.parseInt(scanner.nextLine());
                 if (quantity <= 0) {
-                    System.out.println("Book quantity must be a positive integer.");
+                    ConsoleUI.displayError("Book quantity must be a positive integer.");
                     return;
                 }
                 books[i] = new Book(title, quantity);
             }
-            // Sort the books by title using Insertion Sort
             InsertionSorter.sort(books);
             
             Order newOrder = new Order(customerName, shippingAddress, books);
             orderQueue.enqueue(newOrder);
             orderStack.push(newOrder);
-            System.out.println("Order placed successfully! Order ID: " + newOrder.getOrderId());
+            ConsoleUI.displaySuccess("Order placed successfully! Order ID: " + newOrder.getOrderId());
         } catch (NumberFormatException e) {
-            System.out.println("Input format error: " + e.getMessage());
+            ConsoleUI.displayError("Input format error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Error placing order: " + e.getMessage());
+            ConsoleUI.displayError("Error placing order: " + e.getMessage());
         }
     }
     
     private static void viewOrders() {
-        Object[] orders = orderQueue.toArray();
-        if (orders.length == 0) {
-            System.out.println("No orders available.");
+        Object[] orderObjs = orderQueue.toArray();
+        if (orderObjs.length == 0) {
+            ConsoleUI.displayError("No orders available.");
             return;
         }
-        System.out.println("----- All Orders -----");
-        for (Object obj : orders) {
-            Order order = (Order) obj;
-            System.out.println(order);
-            System.out.println("----------------------");
+        Order[] orders = new Order[orderObjs.length];
+        for (int i = 0; i < orderObjs.length; i++) {
+            orders[i] = (Order) orderObjs[i];
         }
+        InsertionSorter.sort(orders);
+        ConsoleUI.displayOrders(orders);
     }
     
     private static void searchOrder(Scanner scanner) {
         try {
             System.out.print("Enter Order ID to search: ");
             int orderId = Integer.parseInt(scanner.nextLine());
-            // Use a dummy Order with the given orderId for comparison
             Order searchDummy = new Order(orderId);
             Object[] orders = orderQueue.toArray();
             int index = LinearSearcher.search(orders, searchDummy);
@@ -128,28 +166,25 @@ public class BookstoreUI {
                 System.out.println("Order found:");
                 System.out.println(foundOrder);
             } else {
-                System.out.println("Order with ID " + orderId + " not found.");
+                ConsoleUI.displayError("Order with ID " + orderId + " not found.");
             }
         } catch (Exception e) {
-            System.out.println("Error searching for order: " + e.getMessage());
+            ConsoleUI.displayError("Error searching for order: " + e.getMessage());
         }
     }
 
     private static void undoLastOrder() {
         if (orderStack.isEmpty()) {
-            System.out.println("No orders to undo.");
+            ConsoleUI.displayError("No orders to undo.");
             return;
         }
         Order undoneOrder = orderStack.pop();
 
-        // Remove the undone order from the queue
         Object[] ordersArray = orderQueue.toArray();
-        // Create a new queue without the undone order
         Queue<Order> newQueue = new Queue<>();
         boolean found = false;
         for (Object obj : ordersArray) {
             Order order = (Order) obj;
-            // Remove the first instance that matches the undone order
             if (!found && order.equals(undoneOrder)) {
                 found = true;
                 continue;
@@ -157,6 +192,7 @@ public class BookstoreUI {
             newQueue.enqueue(order);
         }
         orderQueue = newQueue;
-        System.out.println("Undid order with ID: " + undoneOrder.getOrderId());
+        ConsoleUI.displaySuccess("Undid order with ID: " + undoneOrder.getOrderId());
     }
 }
+

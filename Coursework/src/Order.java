@@ -1,5 +1,8 @@
-public class Order {
+public class Order implements Comparable<Order> {
     private static int orderCounter = 1;
+    
+    //1 for sorting by Order ID, 2 for sorting by Customer Name
+    public static int sortMode = 1;
     
     private int orderId;
     private String customerName;
@@ -21,6 +24,11 @@ public class Order {
     
     public int getOrderId() {
         return orderId;
+    }
+    
+    // New getter for customerName required for sorting by customer name
+    public String getCustomerName() {
+        return customerName;
     }
     
     @Override
@@ -46,5 +54,17 @@ public class Order {
             sb.append(" No books in order.\n");
         }
         return sb.toString();
+    }
+    
+    // Implement compareTo for dynamic sorting based on sortMode
+    @Override
+    public int compareTo(Order other) {
+        if (sortMode == 1) { // sort by Order ID
+            return this.orderId - other.orderId;
+        } else if (sortMode == 2) { // sort by Customer Name
+            return this.customerName.compareTo(other.customerName);
+        }
+        // Default: sort by Order ID
+        return this.orderId - other.orderId;
     }
 } 

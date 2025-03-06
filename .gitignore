@@ -6,4 +6,6 @@ TestFunctions.java
 Coursework/excluded/
 .cursor/rules/java.mdc
 .cursor/rules/java.md
+.cursor/rules
 Coursework/docs/
+*.tex
