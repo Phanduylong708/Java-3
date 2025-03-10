@@ -38,7 +38,7 @@ public class BookstoreUI {
         while (!back) {
             ConsoleUI.clearScreen();
             ConsoleUI.showOrderManagementMenu();
-            System.out.print("\nEnter your choice (1-3): ");
+            System.out.print("\nEnter your choice (1-4): ");
             String input = scanner.nextLine();
             ConsoleUI.clearScreen();
             
@@ -47,9 +47,12 @@ public class BookstoreUI {
                     placeOrder(scanner);
                     break;
                 case "2":
-                    undoLastOrder();
+                    updateOrderStatus(scanner);
                     break;
                 case "3":
+                    undoLastOrder();
+                    break;
+                case "4":
                     back = true;
                     break;
                 default:
@@ -193,6 +196,38 @@ public class BookstoreUI {
         }
         orderQueue = newQueue;
         ConsoleUI.displaySuccess("Undid order with ID: " + undoneOrder.getOrderId());
+    }
+
+    private static void updateOrderStatus(Scanner scanner) {
+        try {
+            System.out.print("Enter Order ID to update: ");
+            int orderId = Integer.parseInt(scanner.nextLine());
+            Order searchDummy = new Order(orderId);
+            Object[] orders = orderQueue.toArray();
+            int index = LinearSearcher.search(orders, searchDummy);
+            
+            if (index != -1) {
+                Order foundOrder = (Order) orders[index];
+                System.out.println("\nCurrent order status: " + foundOrder.getStatus());
+                ConsoleUI.showUpdateStatusMenu();
+                
+                System.out.print("Enter new status: ");
+                String newStatus = scanner.nextLine().toUpperCase();
+                try {
+                    OrderStatus status = OrderStatus.valueOf(newStatus);
+                    foundOrder.setStatus(status);
+                    ConsoleUI.displaySuccess("Order status updated successfully!");
+                } catch (IllegalArgumentException e) {
+                    ConsoleUI.displayError("Invalid status entered.");
+                }
+            } else {
+                ConsoleUI.displayError("Order with ID " + orderId + " not found.");
+            }
+        } catch (NumberFormatException e) {
+            ConsoleUI.displayError("Invalid Order ID format.");
+        } catch (Exception e) {
+            ConsoleUI.displayError("Error updating order status: " + e.getMessage());
+        }
     }
 }
 
