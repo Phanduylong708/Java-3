@@ -17,8 +17,9 @@ public class ConsoleUI {
     public static void showOrderManagementMenu() {
         printHeader("ORDER MANAGEMENT");
         System.out.println("1. Place New Order");
-        System.out.println("2. Undo Last Order");
-        System.out.println("3. Back to Main Menu");
+        System.out.println("2. Update Order Status");
+        System.out.println("3. Undo Last Order");
+        System.out.println("4. Back to Main Menu");
         printSeparator();
     }
 
@@ -27,6 +28,15 @@ public class ConsoleUI {
         System.out.println("1. View All Orders");
         System.out.println("2. Search Order by ID");
         System.out.println("3. Back to Main Menu");
+        printSeparator();
+    }
+
+    public static void showUpdateStatusMenu() {
+        printHeader("UPDATE ORDER STATUS");
+        System.out.println("Available Statuses:");
+        for (OrderStatus status : OrderStatus.values()) {
+            System.out.println(" - " + status);
+        }
         printSeparator();
     }
 

@@ -8,6 +8,7 @@ public class Order implements Comparable<Order> {
     private String customerName;
     private String shippingAddress;
     private Book[] books;
+    private OrderStatus status;
     
     // Full constructor: auto-assigns a unique orderId
     public Order(String customerName, String shippingAddress, Book[] books) {
@@ -15,6 +16,7 @@ public class Order implements Comparable<Order> {
         this.customerName = customerName;
         this.shippingAddress = shippingAddress;
         this.books = books;
+        this.status = OrderStatus.PENDING; // Set initial status as PENDING
     }
     
     // Partial constructor for search purposes (only orderId is needed)
@@ -30,6 +32,14 @@ public class Order implements Comparable<Order> {
     public String getCustomerName() {
         return customerName;
     }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
     
     @Override
     public boolean equals(Object obj) {
@@ -43,6 +53,7 @@ public class Order implements Comparable<Order> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Order ID: ").append(orderId).append("\n");
+        sb.append("Status: ").append(status).append("\n");
         sb.append("Customer Name: ").append(customerName).append("\n");
         sb.append("Shipping Address: ").append(shippingAddress).append("\n");
         sb.append("Books:\n");
